@@ -1,18 +1,44 @@
 #pragma once
 
 #include <string>
+
 #include <mirror/status.h>
 
 namespace mirror {
-    class Module {
+    /**
+     * DispatchModule represents a service that Dispatch controls. 
+     */
+    class DispatchModule {
     public:
-        Module(std::string& name, std::string& address);
+        /**
+         * Constructs a DispatchModule with a given name and IP address 
+         */
+        DispatchModule(std::string& name, std::string& address);
 
+        /**
+         * Constructs a DispatchModule
+         */
+        DispatchModule();
+
+        /**
+         * Gets this DispatchModule's name 
+         */
         std::string getName() { return name; }
 
+        /**
+         * Gets this DispatchModule's IP address 
+         */
         std::string getAddress() { return address; }
 
-        mirror::Status getStatus() { return status; }
+        /**
+         * Gets this DispatchModule's status  
+         */
+        mirror::Status& getStatus() { return status; }
+
+        /**
+         * Sets this DispatchModule's status
+         */
+        void setStatus(mirror::Status status) { this->status = status; }
     
     private:
         std::string name;

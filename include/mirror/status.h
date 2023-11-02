@@ -1,22 +1,34 @@
 #pragma once
 
 #include <string>
+#include <chrono>
 
 namespace mirror {
+    /**
+     * Status represents a limited-lifetime status of a single module.
+     * Upon the expiration of a status, the scheduler will attempt to get a
+     * new status.
+     */
     class Status {
     public:
         Status();
 
-        enum class Codes {
-            OK,
-            STALE,
-            ERROR,
-            RECOVERY
+        enum class States {
+            UP,
+            WARN,
+            DOWN,
+            UNKNOWN
         };
         
-        Codes getCode() { return code; };
+        States getState() { return state; };
+
+        bool isExpired();
+
+        void print();
     
     private:
-        Codes code;
+        States state;
+        std::chrono::system_clock::time_point creation;
+        std::chrono::system_clock::time_point expiry;
     };
 }

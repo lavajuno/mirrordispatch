@@ -98,10 +98,5 @@ namespace mirror {
          * @param line Line to send to log server
          */
         void sendLine(const std::string &line);
-
-        /**
-         * Responsible for keeping the connection between the component and the log server alive during periods of reduced log traffic
-         */
-        [[noreturn]] static void initializeKeepAliveThread();
     };
 }
