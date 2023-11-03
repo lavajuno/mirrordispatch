@@ -1,5 +1,5 @@
-#include <mirror/job.h>
-#include <mirror/module.h>
+#include <scheduler/job.h>
+#include <scheduler/module.h>
 
 namespace mirror {
     DispatchJob::DispatchJob(DispatchJob::Tasks task, DispatchModule& target) {

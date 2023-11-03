@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <mirror/status.h>
+#include <scheduler/status.h>
 
 namespace mirror {
     /**

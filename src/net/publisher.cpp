@@ -1,6 +1,6 @@
-#include <mirror/publisher.h>
-#include <mirror/module.h>
-#include <mirror/job.h>
+#include <net/publisher.h>
+#include <scheduler/module.h>
+#include <scheduler/job.h>
 
 #include <exception>
 #include <string>
@@ -25,7 +25,7 @@ namespace mirror {
         is_configured = true;
     }
 
-    void DispatchPublisher::send() {
+    void DispatchPublisher::send(DispatchJob& job) {
         std::cout << "TODO\n";
     }
 

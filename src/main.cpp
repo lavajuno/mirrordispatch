@@ -1,10 +1,10 @@
 #include <iostream>
 
-#include <mirror/publisher.h>
-#include <mirror/module.h>
-#include <mirror/status.h>
-#include <mirror/job.h>
-#include <mirror/tests.h>
+#include <net/publisher.h>
+#include <scheduler/module.h>
+#include <scheduler/status.h>
+#include <scheduler/job.h>
+#include <tests.h>
 
 using namespace mirror;
 

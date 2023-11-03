@@ -1,8 +1,10 @@
 #pragma once
 
 #include <memory>
-#include <zmq.hpp>
 #include <mutex>
+#include <zmq.hpp>
+
+#include <scheduler/job.h>
 
 namespace mirror {
     /**
@@ -28,7 +30,7 @@ namespace mirror {
         /**
          * Publishes a job
          */
-        void send(DispatchJob& job);
+        void publishJob(DispatchJob& job);
 
     private:
         std::mutex socket_mutex;

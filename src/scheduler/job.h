@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <mirror/module.h>
+#include <scheduler/module.h>
 
 namespace mirror {
     /**
