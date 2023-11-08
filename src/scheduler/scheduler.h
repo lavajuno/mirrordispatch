@@ -12,10 +12,9 @@ namespace mirror {
      */
     class DispatchScheduler {
     public:
-        DispatchScheduler(DispatchScheduler &&) = delete;
-        DispatchScheduler(DispatchScheduler &) = delete;
+        DispatchScheduler();
 
-        static std::shared_ptr<DispatchScheduler> getInstance();
+        ~DispatchScheduler();
 
         void scheduleStart();
 
@@ -30,9 +29,9 @@ namespace mirror {
         void printJobs();
         
     private:
-        std::shared_ptr<DispatchPublisher> publisher;
-        std::shared_ptr<Logger> logger;
+        DispatchPublisher* publisher;
+        Logger* logger;
         std::queue<DispatchJob> jobs;
-        DispatchScheduler();
+        
     };
 }

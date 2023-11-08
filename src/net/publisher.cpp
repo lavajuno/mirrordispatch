@@ -7,29 +7,29 @@
 #include <thread>
 #include <chrono>
 #include <mutex>
-#include <iostream>
 
 namespace mirror {
-    std::mutex socketMutex;
+
+    zmq::context_t DispatchPublisher::publisher_context(1, 1);
+
+    DispatchPublisher* DispatchPublisher::instance = nullptr;
+
+    std::mutex DispatchPublisher::access_mutex;
+
+    DispatchPublisher* DispatchPublisher::getInstance() {
+        std::lock_guard<std::mutex> guard(access_mutex);
+        if(instance == nullptr) { instance = new DispatchPublisher(); }
+        return instance;
+    }
     
-    std::shared_ptr<DispatchPublisher> DispatchPublisher::getInstance() {
-        static std::shared_ptr<DispatchPublisher> dispatchPublisher(
-            new DispatchPublisher()
-        );
-        return dispatchPublisher;
-    }
-
-    void DispatchPublisher::configure(uint16_t port) {
-        socket = zmq::socket_t(zmq_context, zmq::socket_type::pub);
-        socket.bind("tcp://localhost:" + std::to_string(port));
-        is_configured = true;
-    }
-
-    void DispatchPublisher::send(DispatchJob& job) {
-        std::cout << "TODO\n";
-    }
-
     DispatchPublisher::DispatchPublisher() {
-        is_configured = false;
+        this->logger = Logger::getInstance();
+        DispatchConfig* config = DispatchConfig::getInstance();
+        this->socket_addr = "tcp://localhost:" + config->getPublisherPort();
+        socket.bind(socket_addr);
+    }
+
+    void DispatchPublisher::publishJob(DispatchJob& job) {
+        std::cout << "TODO\n";
     }
 }

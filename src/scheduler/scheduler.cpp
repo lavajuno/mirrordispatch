@@ -6,9 +6,11 @@
 #include <iostream>
 
 namespace mirror {
-    std::shared_ptr<DispatchScheduler> DispatchScheduler::getInstance() {
-        static std::shared_ptr<DispatchScheduler> scheduler(new DispatchScheduler());
-        return scheduler;
+    DispatchScheduler::DispatchScheduler() {
+        this->jobs = std::queue<DispatchJob>();
+        this->logger = Logger::getInstance();
+        this->publisher = DispatchPublisher::getInstance();
+        logger->info("Scheduler configured.");
     }
 
     void DispatchScheduler::scheduleStart() {
@@ -35,12 +37,5 @@ namespace mirror {
         std::cout << "DispatchScheduler::printJobs()\n";
     }
 
-    DispatchScheduler::DispatchScheduler() {
-        this->jobs = std::queue<DispatchJob>();
-        this->logger = Logger::getInstance();
-        this->publisher = DispatchPublisher::getInstance();
-        logger->configure(4357, "Dispatch");
-        publisher->configure(4358);
-        logger->info("Scheduler configured.");
-    }
+
 }

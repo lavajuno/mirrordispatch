@@ -5,6 +5,9 @@
 #include <zmq.hpp>
 
 #include <scheduler/job.h>
+#include <config/config.h>
+#include <mirror/logger.h>
+#include <iostream>
 
 namespace mirror {
     /**
@@ -13,34 +16,34 @@ namespace mirror {
      */
     class DispatchPublisher {
     public:
-        DispatchPublisher(DispatchPublisher &&) = delete;
-
         DispatchPublisher(DispatchPublisher &) = delete;
+        DispatchPublisher(DispatchPublisher &&) = delete;
+        DispatchPublisher &operator=(const DispatchPublisher &) = delete;
+        DispatchPublisher &operator=(const DispatchPublisher &&) = delete;
 
-        /**
-         * Returns a shared pointer to this DispatchPublisher 
-         */
-        static std::shared_ptr<DispatchPublisher> getInstance();
-
-        /**
-         * Sets up this DispatchPublisher with a given port number 
-         */
-        void configure(uint16_t port);
+        static DispatchPublisher* getInstance();
 
         /**
          * Publishes a job
          */
         void publishJob(DispatchJob& job);
 
-    private:
-        std::mutex socket_mutex;
-
-        bool is_configured;
-
-        zmq::socket_t socket;
-        
-        zmq::context_t zmq_context{1, 1};
-
+    protected:
         DispatchPublisher();
+
+        ~DispatchPublisher() { socket.close(); }
+
+    private:
+        static DispatchPublisher* instance;
+
+        static std::mutex access_mutex;
+
+        static zmq::context_t publisher_context;
+
+        Logger* logger;
+        
+        zmq::socket_t socket;
+
+        std::string socket_addr;
     };
 }

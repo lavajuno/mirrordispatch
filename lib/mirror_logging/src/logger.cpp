@@ -1,63 +1,84 @@
+// Header Being Defined
 #include <mirror/logger.h>
 
-#include <exception>
-#include <string>
-#include <zmq.hpp>
-#include <thread>
-#include <chrono>
+// std includes
 #include <mutex>
+#include <string>
+#include <thread>
+
+// Library includes
+#include <zmq.hpp>
 
 namespace mirror {
-    //mutex used to prevent race conditions when sending messages to the log server
-    std::mutex socketMutex;
 
-    std::shared_ptr<Logger> Logger::getInstance() {
-        static std::shared_ptr<Logger> logger(new Logger());
-        return logger;
-    }
+    zmq::context_t socketContext(1, 1);
 
-    void Logger::configure(uint16_t port, const std::string &componentName) {
-        // Initialize connection to log server
-        m_LogServerSocket = zmq::socket_t(m_SocketContext, zmq::socket_type::stream);
-        m_LogServerSocket.connect("tcp://localhost:" + std::to_string(port));
-        m_Configured = true;
+    // Static Member Initializations
+    Logger *Logger::s_Instance = nullptr;
+    std::mutex Logger::s_AccessMutex;
 
-        // Send log server the component name
-        setComponentName(componentName);
-    }
+    /*
+     * Start Of Public Functions
+     */
 
-    void Logger::sendLine(const std::string &line) {
-        // if not configured throw exception, will likely end program unless wrapped in try catch
-        if (!m_Configured) { throw std::logic_error("Error: Logger Not Configured"); }
+    Logger *Logger::getInstance() {
+        std::lock_guard<std::mutex> instanceLock(s_AccessMutex);
 
-        {
-            // lock mutex so that messages aren't sent simultaneously
-            std::lock_guard<std::mutex> lock(socketMutex);
-
-            // send message
-            std::string routingID = m_LogServerSocket.get(zmq::sockopt::routing_id);
-            m_LogServerSocket.send(zmq::message_t(routingID), zmq::send_flags::sndmore);
-            m_LogServerSocket.send(zmq::message_t(line + "\r\n"), zmq::send_flags::none);
+        // If no instance exists, one is created
+        if (s_Instance == nullptr) {
+            s_Instance = new Logger();
         }
+
+        return s_Instance;
     }
 
     [[maybe_unused]] void Logger::info(const std::string &logMessage) {
-        sendLine(std::to_string((int) LogLevels::Info) + logMessage);
+        std::string lineToSend = "@" + std::to_string((int) LogLevels::Info) + logMessage;
+        f_SendLine(lineToSend);
     }
 
     [[maybe_unused]] void Logger::warn(const std::string &logMessage) {
-        sendLine(std::to_string((int) LogLevels::Warn) + logMessage);
+        std::string lineToSend = "@" + std::to_string((int) LogLevels::Warn) + logMessage;
+        f_SendLine(lineToSend);
     }
 
     [[maybe_unused]] void Logger::error(const std::string &logMessage) {
-        sendLine(std::to_string((int) LogLevels::Error) + logMessage);
+        std::string lineToSend = "@" + std::to_string((int) LogLevels::Error) + logMessage;
+        f_SendLine(lineToSend);
     }
 
     [[maybe_unused]] void Logger::fatal(const std::string &logMessage) {
-        sendLine(std::to_string((int) LogLevels::Fatal) + logMessage);
+        std::string lineToSend = "@" + std::to_string((int) LogLevels::Fatal) + logMessage;
+        f_SendLine(lineToSend);
     }
 
-    void Logger::setComponentName(const std::string &componentName) {
-        sendLine("@ComponentName " + componentName);
+    void Logger::configure(uint16_t port, const std::string &componentName, const std::string &address) {
+        std::lock_guard<std::mutex> instanceLock(s_AccessMutex);
+
+        m_URL = "tcp://" + address + ":" + std::to_string(port);
+        m_LogServerSocket.connect(m_URL);
+
+        m_ComponentName = componentName;
+        m_Configured = true;
     }
-}
+
+    /*
+     * Start Of Private Functions
+     */
+
+    void Logger::f_SendLine(const std::string &lineToSend) {
+        std::lock_guard<std::mutex> instanceGuard(s_AccessMutex);
+
+        // Throws exception if logger is not configured. Should cause the program to end
+        if (!m_Configured)
+            throw std::logic_error("Logger not configured");
+
+        // Routing ID required for sending TCP messages, not part of the packet by default
+        std::string routingID = m_LogServerSocket.get(zmq::sockopt::routing_id);
+        m_LogServerSocket.send(zmq::message_t(routingID), zmq::send_flags::sndmore);
+
+        zmq::message_t message{"@" + m_ComponentName + lineToSend + "\r\n"};
+        m_LogServerSocket.send(message, zmq::send_flags::none);
+    }
+
+} // namespace mirror

@@ -1,102 +1,174 @@
 #pragma once
 
-#include <cstdint>
+// std Includes
+#include <mutex>
 #include <string>
-#include <memory>
+#include <thread>
+
+// Library Includes
 #include <zmq.hpp>
 
 namespace mirror {
+
+    /**
+     * Context for the connection to the log server. Defined in `logger.cpp`
+     */
+    extern zmq::context_t socketContext;
+
     /**
      * Singleton class to be used when logging in projects associated with the Clarkson Open Source Institute's Mirror
      */
     class Logger {
-    public:
-        // Deleted Constructors
-        Logger(Logger &&) = delete;
-
+    public: // Functions
+        // Deleted
+        /**
+         * Copy Constructor - Deleted
+         */
         Logger(Logger &) = delete;
 
         /**
-         * Allows for access to the singleton instance of the Logger class
-         * @return instance of Logger class
+         * Move Constructor - Deleted
          */
-        static std::shared_ptr<Logger> getInstance();
+        Logger(Logger &&) = delete;
 
         /**
-         * Configures Logger class, must be executed else program will shutdown
-         * @param port Port that the log server is running on
-         * @param componentName Name to be displayed along side log messages for identification
+         * Copy Assignment Operator - Deleted
+         *
+         * @return Nothing
          */
-        void configure(uint16_t port, const std::string &componentName);
+        Logger &operator=(const Logger &) = delete;
 
         /**
-         * Sends a message to the log server with severity [info]
-         * @param logMessage message to send to log server
+         * Move Assignment Operator - Deleted
+         * @return Nothing
+         */
+        Logger &operator=(const Logger &&) = delete;
+
+        // Instance Fetch Method
+        /**
+         * Method used to fetch a pointer to the static instance of the Logger class
+         *
+         * @return Pointer to the Loggers static instance
+         */
+        static Logger *getInstance();
+
+        // Logging Methods
+        /**
+         * Sends information to be logged to the log server
+         *
+         * @param logMessage Information to be logged
          */
         [[maybe_unused]] void info(const std::string &logMessage);
 
         /**
-         * Sends a message to the log server with severity [warn]
-         * @param logMessage message to send to log server
+         * Sends a warning message to the log server
+         *
+         * @param logMessage Information to be logged
          */
-        [[maybe_unused]] void warn(const std::string &logMessage);
+        [[maybe_unused]]void warn(const std::string &logMessage);
 
         /**
-        * Sends a message to the log server with severity [error]
-        * @param logMessage message to send to log server
-        */
+         * Sends an error message to the log server
+         *
+         * @param logMessage Information to be logged
+         */
         [[maybe_unused]] void error(const std::string &logMessage);
 
         /**
-         * Sends a message to the log server with severity [fatal]
-         * @param logMessage message to send to log server
+         * Sends a fatal message to the log server
+         *
+         * @param logMessage Information to be logged
          */
         [[maybe_unused]] void fatal(const std::string &logMessage);
 
+        // Configuration
         /**
-         * Sets this Logger's component name  
-         * @param componentName Name to be displayed along side log messages for identification
+         * Configures the connection to the log server
+         *
+         * **Must be called before any log messages can be sent**
+         *
+         * @param port Port that the log server is running on
+         * @param componentName Name of the component that the logger is being used in
+         * @param address IP address of the machine that the log server is running on
          */
-        void setComponentName(const std::string &componentName);
+        void configure(uint16_t port, const std::string &componentName, const std::string &address = "localhost");
 
-
-    private:
+    protected: // Functions
         /**
-         * True if configure() has been run, false otherwise
+         * Default constructor. Registers a function to be called upon program exit that calls the Logger destructor
+         */
+        inline Logger() : m_Configured(false) { std::atexit([]() { Logger::getInstance()->~Logger(); }); }
+
+        // Destructor
+        /**
+         * Destructor for the Logger class. Disconnects from the log server upon being called
+         */
+        inline ~Logger() { m_LogServerSocket.disconnect(m_URL); }
+
+    private: // Functions
+        /**
+         * Sends a line of text to the log server
+         *
+         * @param lineToSend Message to send to the log server
+         */
+        void f_SendLine(const std::string &lineToSend);
+
+    private: // Data
+        /**
+         * Pointer to the instance of the Logger class
+         */
+        static Logger *s_Instance;
+
+        /**
+         * Mutex to prevent issues related to access of the Logger instance in a multi-threaded environment
+         */
+        static std::mutex s_AccessMutex;
+
+        /**
+         * Socket used to communicate with the log server
+         */
+        zmq::socket_t m_LogServerSocket{socketContext, zmq::socket_type::stream};
+
+        /**
+         * URL of the log server
+         */
+        std::string m_URL;
+
+        /**
+         * False until `configure()` is run.
+         *
+         * If false, will cause program shutdown if an attempt is made to send a line to the log server
          */
         bool m_Configured;
 
         /**
-         * socket used to communicate with the log server
+         * Name of the component this class is instantiated in. Sent to the log server with each log message
          */
-        zmq::socket_t m_LogServerSocket;
+        std::string m_ComponentName;
+
 
         /**
-         * context for m_LogServerSocket
+         * Available log levels, used to increase readability in the log methods
          */
-        zmq::context_t m_SocketContext{1, 1};
-
-        /**
-         * Available Log Levels
-         */
-        enum class LogLevels {
+        enum class LogLevels : int {
+            /**
+             * LogLevels::Info
+             */
             Info,
+            /**
+             * LogLevels::Warn
+             */
             Warn,
+            /**
+             * LogLevels::Error
+             */
             Error,
+            /**
+             * LogLevels::Fatal
+             */
             Fatal
         };
 
-    private:
-        /**
-         * Default constructor. Kept private so that the class may be used as a singleton.
-         */
-        Logger() : m_Configured(false) {}
+    }; // class Logger
 
-        /**
-         * Sends line to log server so long as configure() has been called previously
-         * @throws std::logic_error thrown if configure() hasn't been called previously
-         * @param line Line to send to log server
-         */
-        void sendLine(const std::string &line);
-    };
-}
+} // namespace mirror
