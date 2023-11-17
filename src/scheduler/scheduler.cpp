@@ -7,6 +7,7 @@
 #include <list>
 #include <queue>
 #include <iostream>
+#include <thread>
 
 #include <scheduler/scheduler.hpp>
 
@@ -26,6 +27,10 @@ namespace mirror {
         this->jobs = std::queue<DispatchJob>();
         this->logger = Logger::getInstance();
         this->docker = Docker::getInstance();
+        flag_interrupt = false;
+        std::thread schedulerThread(runScheduler);
+        schedulerThread.detach();
+        std::cout << "Scheduler configured.\n";
         logger->info("Scheduler configured.");
     }
 
@@ -53,5 +58,25 @@ namespace mirror {
         std::cout << "DispatchScheduler::printJobs()\n";
     }
 
+    void DispatchScheduler::pushJob(DispatchJob& job) {
+        std::lock_guard<std::mutex> guard(access);
+        jobs.push(job);
+    }
+
+    DispatchJob DispatchScheduler::nextJob() {
+        std::lock_guard<std::mutex> guard(access);
+        return jobs.front();
+    }
+
+    void DispatchScheduler::popJob() {
+        std::lock_guard<std::mutex> guard(access);
+        jobs.pop();
+    }
+
+    void DispatchScheduler::runScheduler() {
+        std::cout << "Scheduler thread started.\n";
+        DispatchScheduler* scheduler = DispatchScheduler::getInstance();
+        std::cout << "Got instance.\n";
+    }
 
 }

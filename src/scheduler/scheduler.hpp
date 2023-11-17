@@ -29,11 +29,20 @@ namespace mirror {
         void printModules();
 
         void printJobs();
-        
+
+        void pushJob(DispatchJob& job);
+
+        DispatchJob nextJob();
+
+        void popJob();
+
     protected:
         DispatchScheduler();
 
         ~DispatchScheduler();
+
+        static void runScheduler();
+
     private:
         static DispatchScheduler* instance;
         static std::mutex access;
@@ -41,5 +50,7 @@ namespace mirror {
         Docker* docker;
         Logger* logger;
         std::queue<DispatchJob> jobs;
+
+        bool flag_interrupt;        
     };
 }
