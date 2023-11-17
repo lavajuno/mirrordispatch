@@ -14,5 +14,10 @@ namespace mirror {
          * Tests class Status
          */
         bool testStatus();
+
+        /**
+         * Tests class Config 
+         */
+        bool testConfig();
     }
 }

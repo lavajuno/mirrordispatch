@@ -35,6 +35,9 @@ namespace mirror {
 
         ~DispatchScheduler();
     private:
+        static DispatchScheduler* instance;
+        static std::mutex access;
+        
         Docker* docker;
         Logger* logger;
         std::queue<DispatchJob> jobs;

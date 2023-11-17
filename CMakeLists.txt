@@ -21,10 +21,19 @@ add_library(scheduler
     src/scheduler/status.cpp
 )
 
+add_library(config
+    src/config/config.cpp
+)
+
 # Libraries to be linked internally
 target_link_libraries(scheduler
     io
     mirror_logging
+    config
+)
+
+target_link_libraries(config
+    scheduler
 )
 
 # Libraries to be linked to executable
@@ -32,5 +41,6 @@ link_libraries(
     mirror_logging
     io
     scheduler
+    config
 )
 add_executable(mirror_dispatch src/main.cpp src/tests.cpp)

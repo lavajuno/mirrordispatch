@@ -22,27 +22,35 @@ namespace mirror {
         return std::chrono::system_clock::now() > expiry;
     }
 
-    void Status::print() {
-        std::cout << "Status:\n  Creation time: ";
-        std::cout << std::chrono::system_clock::to_time_t(creation) << "\n";
-        std::cout << "  Expiry time: ";
-        std::cout << std::chrono::system_clock::to_time_t(expiry) << "\n";
-        std::cout << "  State: ";
-        switch(state) {
+    void Status::print(unsigned int indent) {
+        std::string sp(indent, ' ');
+        std::cout << sp << "Status:\n";
+
+        std::cout << sp << "  state: ";
+        switch(this->state) {
             case States::UP:
                 std::cout << "UP";
-            break;
+                break;
             case States::WARN:
                 std::cout << "WARN";
-            break;
+                break;
             case States::DOWN:
                 std::cout << "DOWN";
-            break;
+                break;
             default:
                 std::cout << "UNKNOWN";
-            break;
+                break;
         }
         std::cout << "\n";
+
+        std::cout << sp << "  creation: ";
+        std::cout << std::chrono::system_clock::to_time_t(this->creation) << "\n";
+
+        std::cout << sp << "  expiry: ";
+        std::cout << std::chrono::system_clock::to_time_t(this->expiry) << "\n";
+
+        std::cout << sp << "  isExpired: ";
+        std::cout << this->isExpired() << "\n";
     }
 
     /**

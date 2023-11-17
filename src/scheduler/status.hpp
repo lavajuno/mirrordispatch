@@ -48,9 +48,15 @@ namespace mirror {
         bool isExpired();
 
         /**
+         * Prints this Status to stdout with the specified indent.
+         * @param indent Indent to print with 
+         */
+        void print(unsigned int indent);
+        
+        /**
          * Prints this Status to stdout.
          */
-        void print();
+        void print() { this->print(0); }
     
     private:
         States state;
