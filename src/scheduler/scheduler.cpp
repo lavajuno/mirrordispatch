@@ -1,15 +1,31 @@
-#include <scheduler/scheduler.h>
+#include <mirror/logger.h>
+#include <io/docker.hpp>
+#include <scheduler/job.hpp>
 
+#include <mutex>
 #include <memory>
 #include <list>
 #include <queue>
 #include <iostream>
 
+#include <scheduler/scheduler.hpp>
+
 namespace mirror {
+
+    DispatchScheduler* DispatchScheduler::instance = nullptr;
+
+    std::mutex DispatchScheduler::access;
+
+    DispatchScheduler* DispatchScheduler::getInstance() {
+        std::lock_guard<std::mutex> guard(access);
+        if(instance == nullptr) { instance = new DispatchScheduler(); }
+        return instance;
+    }
+
     DispatchScheduler::DispatchScheduler() {
         this->jobs = std::queue<DispatchJob>();
         this->logger = Logger::getInstance();
-        this->publisher = DispatchPublisher::getInstance();
+        this->docker = Docker::getInstance();
         logger->info("Scheduler configured.");
     }
 

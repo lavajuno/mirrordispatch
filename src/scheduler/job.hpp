@@ -1,8 +1,6 @@
 #pragma once
 
-#include <string>
-
-#include <scheduler/module.h>
+#include <scheduler/module.hpp>
 
 namespace mirror {
     /**
@@ -15,16 +13,15 @@ namespace mirror {
          */
         enum class Tasks {
             START,
+            STOP,
             RESTART,
-            CONFIGURE,
-            STATUSCHECK,
-            SHUTDOWN,
+            CHECK
         };
 
         /**
          * Constructs a DispatchJob with a task and a target module 
          */
-        DispatchJob(Tasks task, DispatchModule& target);
+        DispatchJob(Tasks task, DispatchModule* target);
 
         /**
          * Gets this DispatchJob's task 
@@ -34,10 +31,10 @@ namespace mirror {
         /**
          * Gets this DispatchJob's target module 
          */
-        DispatchModule& getTarget() { return target; }
+        DispatchModule* getTarget() { return target; }
 
     private:
         Tasks task;
-        DispatchModule target;
+        DispatchModule* target;
     };
 }

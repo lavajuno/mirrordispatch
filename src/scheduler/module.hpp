@@ -1,8 +1,7 @@
 #pragma once
 
 #include <string>
-
-#include <scheduler/status.h>
+#include <scheduler/status.hpp>
 
 namespace mirror {
     /**
@@ -13,12 +12,12 @@ namespace mirror {
         /**
          * Constructs a DispatchModule with a given name and IP address 
          */
-        DispatchModule(std::string& name, std::string& address);
+        DispatchModule(std::string name, std::string host, uint16_t port);
 
         /**
-         * Constructs a DispatchModule
+         * Destroys this DispatchModule
          */
-        DispatchModule();
+        ~DispatchModule();
 
         /**
          * Gets this DispatchModule's name 
@@ -26,9 +25,9 @@ namespace mirror {
         std::string getName() { return name; }
 
         /**
-         * Gets this DispatchModule's IP address 
+         * Gets this DispatchModule's host
          */
-        std::string getAddress() { return address; }
+        std::string getHost() { return host; }
 
         /**
          * Gets this DispatchModule's status  
@@ -38,11 +37,15 @@ namespace mirror {
         /**
          * Sets this DispatchModule's status
          */
-        void setStatus(mirror::Status status) { this->status = status; }
+        void setStatus(mirror::Status& status) { this->status = status; }
     
+        void print(unsigned int indent);
+
+        void print() { this->print(0); }
     private:
         std::string name;
-        std::string address;
+        std::string host;
+        uint16_t port;
         mirror::Status status;
     };
 }
