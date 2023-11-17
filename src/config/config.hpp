@@ -25,7 +25,7 @@ namespace mirror {
 
     private:
         static DispatchConfig* instance;
-        static std::mutex access_mutex;
+        static std::mutex access;
 
         uint16_t publisher_port;
         std::string logger_host;

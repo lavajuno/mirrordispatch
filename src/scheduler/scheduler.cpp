@@ -1,15 +1,22 @@
-#include <scheduler/scheduler.h>
+#include <memory>
+#include <mutex>
+#include <queue>
+#include <mirror/logger.h>
+#include <io/docker.hpp>
 
+#include <scheduler/job.hpp>
 #include <memory>
 #include <list>
 #include <queue>
 #include <iostream>
 
+#include <scheduler/scheduler.hpp>
+
 namespace mirror {
     DispatchScheduler::DispatchScheduler() {
         this->jobs = std::queue<DispatchJob>();
         this->logger = Logger::getInstance();
-        this->publisher = DispatchPublisher::getInstance();
+        this->docker = Docker::getInstance();
         logger->info("Scheduler configured.");
     }
 

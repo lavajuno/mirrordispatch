@@ -1,10 +1,11 @@
 #include <iostream>
 
-#include <net/publisher.h>
-#include <scheduler/module.h>
-#include <scheduler/status.h>
-#include <scheduler/job.h>
-#include <tests.h>
+#include <io/docker.hpp>
+#include <scheduler/module.hpp>
+#include <scheduler/status.hpp>
+#include <scheduler/job.hpp>
+#include <tests.hpp>
+#include <cstring>
 
 using namespace mirror;
 

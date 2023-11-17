@@ -1,8 +1,7 @@
 #pragma once
 
 #include <string>
-
-#include <scheduler/status.h>
+#include <scheduler/status.hpp>
 
 namespace mirror {
     /**

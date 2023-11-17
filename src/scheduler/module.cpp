@@ -1,4 +1,8 @@
-#include <scheduler/module.h>
+
+#include <string>
+
+#include <scheduler/status.hpp>
+#include <scheduler/module.hpp>
 
 namespace mirror {
     DispatchModule::DispatchModule(std::string& name, std::string& address) {

@@ -1,11 +1,11 @@
 #include <iostream>
 
-#include <scheduler/job.h>
-#include <scheduler/module.h>
-#include <net/publisher.h>
-#include <scheduler/scheduler.h>
-#include <scheduler/status.h>
-#include <tests.h>
+#include <scheduler/job.hpp>
+#include <scheduler/module.hpp>
+#include <io/docker.hpp>
+#include <scheduler/scheduler.hpp>
+#include <scheduler/status.hpp>
+#include <tests.hpp>
 
 namespace mirror {
     int Tests::run() {
