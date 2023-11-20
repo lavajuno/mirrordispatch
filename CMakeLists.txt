@@ -28,7 +28,7 @@ add_library(config
 # Libraries to be linked internally
 target_link_libraries(scheduler
     io
-    mirror_logging
+    mirror-logging
     config
 )
 
@@ -38,7 +38,7 @@ target_link_libraries(config
 
 # Libraries to be linked to executable
 link_libraries(
-    mirror_logging
+    mirror-logging
     io
     scheduler
     config

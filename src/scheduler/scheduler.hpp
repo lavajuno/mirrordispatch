@@ -2,7 +2,7 @@
 
 #include <io/docker.hpp>
 #include <scheduler/job.hpp>
-#include <mirror/logger.h>
+#include <mirror/logger.hpp>
 #include <queue>
 
 namespace mirror {

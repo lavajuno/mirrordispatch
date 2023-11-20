@@ -4,12 +4,13 @@
 #include <scheduler/status.hpp>
 #include <scheduler/job.hpp>
 #include <config/config.hpp>
-#include <mirror/logger.h>
+#include <mirror/logger.hpp>
 #include <tests.hpp>
 
 #include <iostream>
 #include <cstring>
 #include <csignal>
+#include <chrono>
 
 using namespace mirror;
 
@@ -18,7 +19,8 @@ void terminate(int signal) {
     DispatchScheduler* scheduler = DispatchScheduler::getInstance();
     scheduler->interrupt();
     Logger* logger = Logger::getInstance();
-    delete logger;
+    logger->close();
+    std::this_thread::sleep_for(std::chrono::milliseconds(0500));
 
 }
 
@@ -36,6 +38,5 @@ int main(int argc, char* argv[]) {
     std::cout << "Got instance\n";
 
     int ignored;
-    std::cin >> ignored;
+    //std::cin >> ignored;
 }
-
