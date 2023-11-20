@@ -2,7 +2,7 @@
 
 #include <io/docker.hpp>
 #include <scheduler/job.hpp>
-#include <mirror/logger.h>
+#include <mirror/logger.hpp>
 #include <queue>
 
 namespace mirror {
@@ -35,13 +35,19 @@ namespace mirror {
         DispatchJob nextJob();
 
         void popJob();
+        
+        void interrupt();
+
+        ~DispatchScheduler();
 
     protected:
         DispatchScheduler();
 
-        ~DispatchScheduler();
+        
 
         static void runScheduler();
+
+        bool isInterrupted() { return flag_interrupt; }
 
     private:
         static DispatchScheduler* instance;
@@ -50,6 +56,8 @@ namespace mirror {
         Docker* docker;
         Logger* logger;
         std::queue<DispatchJob> jobs;
+
+        std::thread scheduler_thread;
 
         bool flag_interrupt;        
     };
