@@ -20,8 +20,6 @@ void terminate(int signal) {
     scheduler->interrupt();
     Logger* logger = Logger::getInstance();
     logger->close();
-    std::this_thread::sleep_for(std::chrono::milliseconds(0500));
-
 }
 
 int main(int argc, char* argv[]) {
