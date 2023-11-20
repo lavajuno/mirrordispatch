@@ -17,6 +17,8 @@ void terminate(int signal) {
     std::cout << "Terminated!";
     DispatchScheduler* scheduler = DispatchScheduler::getInstance();
     scheduler->interrupt();
+    Logger* logger = Logger::getInstance();
+    delete logger;
 
 }
 
@@ -33,5 +35,7 @@ int main(int argc, char* argv[]) {
     DispatchScheduler* scheduler = DispatchScheduler::getInstance();
     std::cout << "Got instance\n";
 
+    int ignored;
+    std::cin >> ignored;
 }
 

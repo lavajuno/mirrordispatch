@@ -38,10 +38,12 @@ namespace mirror {
         
         void interrupt();
 
+        ~DispatchScheduler();
+
     protected:
         DispatchScheduler();
 
-        ~DispatchScheduler();
+        
 
         static void runScheduler();
 

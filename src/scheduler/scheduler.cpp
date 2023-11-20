@@ -25,13 +25,13 @@ namespace mirror {
 
     DispatchScheduler::DispatchScheduler() {
         this->jobs = std::queue<DispatchJob>();
-        this->logger = Logger::getInstance();
+        //this->logger = Logger::getInstance();
         this->docker = Docker::getInstance();
         this->flag_interrupt = false;
         this->scheduler_thread = std::thread(runScheduler);
-        scheduler_thread.detach();
+        //scheduler_thread.detach();
         std::cout << "Scheduler configured.\n";
-        logger->info("Scheduler configured.");
+        //logger->info("Scheduler configured.");
     }
 
     void DispatchScheduler::scheduleStart() {
@@ -91,10 +91,9 @@ namespace mirror {
         std::cout << "Interrupted!!!!\n";
         flag_interrupt = true;
         
-        //scheduler_thread.join();
-        scheduler_thread.~thread();
+        scheduler_thread.join();
+        //scheduler_thread.~thread();
         std::cout << "Joined\n";
         
     }
-
 }
