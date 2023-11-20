@@ -35,6 +35,6 @@ namespace mirror {
          * Runs a command and returns its output.
          * If an error occurs, will return NULL. 
          */
-        std::string runCommand(std::string command);
+        static std::string runCommand(std::string command);
     };
 }

@@ -35,6 +35,12 @@ int main(int argc, char* argv[]) {
     DispatchScheduler* scheduler = DispatchScheduler::getInstance();
     std::cout << "Got instance\n";
 
+    std::cout << "Setting up Docker\n";
+    Docker* docker = Docker::getInstance();
+
+    DispatchModule a = DispatchModule(std::string("test1"), std::string("host1"), 1234);
+    docker->startModule(a);
+
     int ignored;
     //std::cin >> ignored;
 }
