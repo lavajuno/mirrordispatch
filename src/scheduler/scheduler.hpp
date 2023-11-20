@@ -35,6 +35,8 @@ namespace mirror {
         DispatchJob nextJob();
 
         void popJob();
+        
+        void interrupt();
 
     protected:
         DispatchScheduler();
@@ -43,6 +45,8 @@ namespace mirror {
 
         static void runScheduler();
 
+        bool isInterrupted() { return flag_interrupt; }
+
     private:
         static DispatchScheduler* instance;
         static std::mutex access;
@@ -50,6 +54,8 @@ namespace mirror {
         Docker* docker;
         Logger* logger;
         std::queue<DispatchJob> jobs;
+
+        std::thread scheduler_thread;
 
         bool flag_interrupt;        
     };
