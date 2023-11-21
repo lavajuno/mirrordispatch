@@ -19,14 +19,33 @@ namespace mirror {
     Docker::~Docker() {}
 
     bool Docker::startModule(DispatchModule& module) {
-        std::cout << "Starting module " << module.getName() << "\n";
         std::lock_guard<std::mutex> lock(access);
         std::stringstream command;
         command << "docker start " << module.getName();
-        std::cout << "Running the command \"" << command.str() << "\"...\n";
         std::string result = runCommand(command.str());
-        std::cout << "Result: \"" << result << "\"\n";
-        return false;
+        return true;
+    }
+
+    bool Docker::stopModule(DispatchModule& module) {
+        std::lock_guard<std::mutex> lock(access);
+        std::stringstream command;
+        command << "docker stop " << module.getName();
+        std::string result = runCommand(command.str());
+        return true;
+    }
+
+    bool Docker::restartModule(DispatchModule& module) {
+        std::lock_guard<std::mutex> lock(access);
+        std::stringstream command;
+        command << "docker restart " << module.getName();
+        std::string result = runCommand(command.str());
+        return true;
+    }
+
+    bool Docker::refreshStatus() {
+        std::lock_guard<std::mutex> lock(access);
+        std::string result = runCommand(std::string("docker ps"));
+        std::cout << result << "\n";
     }
 
 

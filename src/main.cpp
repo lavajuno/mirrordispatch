@@ -39,7 +39,8 @@ int main(int argc, char* argv[]) {
     Docker* docker = Docker::getInstance();
 
     DispatchModule a = DispatchModule(std::string("test1"), std::string("host1"), 1234);
-    docker->startModule(a);
+    //docker->startModule(a);
+    docker->refreshStatus();
 
     int ignored;
     //std::cin >> ignored;
