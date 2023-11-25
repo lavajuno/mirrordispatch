@@ -4,7 +4,7 @@
 
 namespace mirror {
     /**
-     * DispatchJobs are scheduled by DispatchSchedule to take actions on modules. 
+     * DispatchJobs are created by DispatchScheduler to take actions on modules. 
      */
     class DispatchJob {
     public:

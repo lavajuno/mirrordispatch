@@ -9,7 +9,6 @@ namespace mirror {
     /**
      * Public 
      */
-
     Status::Status(Status::States state) :
         state(state),
         creation(std::chrono::system_clock::now()),

@@ -8,8 +8,8 @@
 
 namespace mirror {
     /**
-     * DispatchConfig is a singleton that allows classes to access application
-     * properties that are loaded from a config file.
+     * DispatchConfig allows classes to access application properties that are
+     * loaded from a config file.
      */
     class DispatchConfig {
     public:
@@ -51,7 +51,6 @@ namespace mirror {
         void print() { this->print(0); }
     
     protected:
-
         DispatchConfig();
 
         ~DispatchConfig();

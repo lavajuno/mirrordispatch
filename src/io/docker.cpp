@@ -1,13 +1,19 @@
+#include <io/log.hpp>
 
-#include <io/docker.hpp>
 #include <mutex>
 #include <sstream>
 #include <iostream>
 
-namespace mirror {
+#include <io/docker.hpp>
 
+namespace mirror {
+    
     Docker* Docker::instance = nullptr;
     std::mutex Docker::access;
+
+    /**
+     * Public 
+     */
 
     Docker* Docker::getInstance() {
         std::lock_guard<std::mutex> lock(access);
@@ -15,39 +21,89 @@ namespace mirror {
         return instance;
     }
 
-    Docker::Docker() {}
-    Docker::~Docker() {}
-
     bool Docker::startModule(DispatchModule& module) {
         std::lock_guard<std::mutex> lock(access);
+        log.info(
+            std::string("Starting module \"" + module.getName() + "\"...")
+        );
         std::stringstream command;
         command << "docker start " << module.getName();
+        log.debug(
+            std::string("Running command: \"" + command.str() + "\"...")
+        );
         std::string result = runCommand(command.str());
+        log.debug(
+            std::string("Command result: \"" + result + "\"...")
+        );
         return true;
     }
 
     bool Docker::stopModule(DispatchModule& module) {
         std::lock_guard<std::mutex> lock(access);
+        log.info(
+            std::string("Stopping module \"" + module.getName() + "\"...")
+        );
         std::stringstream command;
         command << "docker stop " << module.getName();
+        log.debug(
+            std::string("Running command: \"" + command.str() + "\"...")
+        );
         std::string result = runCommand(command.str());
+        log.debug(
+            std::string("Command result: \"" + result + "\"...")
+        );
         return true;
     }
 
     bool Docker::restartModule(DispatchModule& module) {
         std::lock_guard<std::mutex> lock(access);
+        log.info(
+            std::string("Restarting module \"" + module.getName() + "\"...")
+        );
         std::stringstream command;
         command << "docker restart " << module.getName();
+        log.debug(
+            std::string("Running command: \"" + command.str() + "\"...")
+        );
         std::string result = runCommand(command.str());
+        log.debug(
+            std::string("Command result: \"" + result + "\"...")
+        );
         return true;
     }
 
-    bool Docker::refreshStatus() {
+    bool Docker::getStatus(DispatchModule& module) {
         std::lock_guard<std::mutex> lock(access);
-        std::string result = runCommand(std::string("docker ps"));
-        std::cout << result << "\n";
+        log.info(
+            std::string("Getting status of \"" + module.getName() + "\"...")
+        );
+        std::stringstream command;
+        command << "docker stats --no-stream " << module.getName();
+        log.debug(
+            std::string("Running command: \"" + command.str() + "\"...")
+        );
+        std::string result = runCommand(command.str());
+        log.debug(
+            std::string("Command result: \"" + result + "\"...")
+        );
+        return true;
     }
 
+    /**
+     * Protected 
+     */
+
+    Docker::Docker() :
+        log(DispatchLog(std::string("docker")))
+    {
+        log.debug("Instantiated Docker.");
+    }
+
+    Docker::~Docker() {}
+
+    /**
+     * Private
+     */
 
     std::string Docker::runCommand(std::string command) {
         std::string output = "";
@@ -68,6 +124,4 @@ namespace mirror {
         pclose(pipe);
         return output;
     }
-
-
 }

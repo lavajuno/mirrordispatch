@@ -6,6 +6,7 @@
 #include <config/config.hpp>
 #include <mirror/logger.hpp>
 #include <tests.hpp>
+#include <io/log.hpp>
 
 #include <iostream>
 #include <cstring>
@@ -40,8 +41,13 @@ int main(int argc, char* argv[]) {
 
     DispatchModule a = DispatchModule(std::string("test1"), std::string("host1"), 1234);
     //docker->startModule(a);
-    docker->refreshStatus();
+    docker->getStatus(a);
 
+    DispatchLog log(std::string("test28356"), std::cout);
+    log.info("test");
+
+    DispatchLog log2(std::string("test"), std::cout);
+    log2.info("test");
     int ignored;
     //std::cin >> ignored;
 }

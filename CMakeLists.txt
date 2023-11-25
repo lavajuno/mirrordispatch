@@ -12,6 +12,7 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 # Internal libraries from source
 add_library(io
     src/io/docker.cpp
+    src/io/log.cpp
 )
 
 add_library(scheduler
