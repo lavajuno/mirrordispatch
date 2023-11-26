@@ -3,6 +3,7 @@
 #include <io/docker.hpp>
 #include <scheduler/job.hpp>
 #include <mirror/logger.hpp>
+#include <config/config.hpp>
 #include <queue>
 
 namespace mirror {
@@ -47,14 +48,14 @@ namespace mirror {
         void scheduleRefresh();
 
         /**
-         * Prints this scheduler's modules. 
+         * Prints this Scheduler to stdout with the specified indent
          */
-        void printModules();
+        void print(unsigned int indent);
 
         /**
-         * Prints the jobs in the queue. 
+         * Prints this Scheduler to stdout
          */
-        void printJobs();
+        void print() { this->print(0); }
 
         /**
          * Adds a job to the queue.
@@ -102,7 +103,9 @@ namespace mirror {
         static DispatchScheduler* instance;
         static std::mutex access;
         Docker* docker;
-        Logger* logger;
+        Logger* net_log;
+        DispatchConfig* config;
+        DispatchLog log;
         std::queue<DispatchJob> jobs;
         std::thread scheduler_thread;
         bool flag_interrupt;        

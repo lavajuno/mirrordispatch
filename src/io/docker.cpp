@@ -94,7 +94,7 @@ namespace mirror {
      */
 
     Docker::Docker() :
-        log(DispatchLog(std::string("docker")))
+        log(DispatchLog("docker"))
     {
         log.debug("Instantiated Docker.");
     }

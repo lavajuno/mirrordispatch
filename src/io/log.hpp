@@ -13,8 +13,8 @@ namespace mirror {
          * Constructs a DispatchLog.
          * @param module_name Module name to prepend log events with
          */
-        DispatchLog(std::string module_name) :
-            name(module_name), 
+        DispatchLog(const char* module_name) :
+            name(std::string(module_name)), 
             out(std::cout) 
         {}
 
@@ -23,8 +23,8 @@ namespace mirror {
          * @param module_name Module name to prepend log events with
          * @param out_stream Output stream to print events to
          */
-        DispatchLog(std::string module_name, std::ostream& out_stream) :
-            name(module_name), 
+        DispatchLog(const char* module_name, std::ostream& out_stream) :
+            name(std::string(module_name)), 
             out(out_stream) 
         {}
 

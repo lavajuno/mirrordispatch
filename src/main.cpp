@@ -43,10 +43,10 @@ int main(int argc, char* argv[]) {
     //docker->startModule(a);
     docker->getStatus(a);
 
-    DispatchLog log(std::string("test28356"), std::cout);
+    DispatchLog log("test28356");
     log.info("test");
 
-    DispatchLog log2(std::string("test"), std::cout);
+    DispatchLog log2("test");
     log2.info("test");
     int ignored;
     //std::cin >> ignored;

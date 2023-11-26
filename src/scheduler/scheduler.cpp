@@ -1,6 +1,7 @@
 #include <mirror/logger.hpp>
 #include <io/docker.hpp>
 #include <scheduler/job.hpp>
+#include <config/config.hpp>
 
 #include <mutex>
 #include <memory>
@@ -23,39 +24,40 @@ namespace mirror {
         return instance;
     }
 
-    DispatchScheduler::DispatchScheduler() {
-        this->jobs = std::queue<DispatchJob>();
-        //this->logger = Logger::getInstance();
-        this->docker = Docker::getInstance();
-        this->flag_interrupt = false;
-        this->scheduler_thread = std::thread(runScheduler);
-        //scheduler_thread.detach();
-        std::cout << "Scheduler configured.\n";
-        //logger->info("Scheduler configured.");
-    }
+    DispatchScheduler::DispatchScheduler() :
+        jobs(std::queue<DispatchJob>()),
+        docker(Docker::getInstance()),
+        net_log(Logger::getInstance()),
+        config(DispatchConfig::getInstance()),
+        scheduler_thread(std::thread(runScheduler)),
+        log(DispatchLog("Scheduler")),
+        flag_interrupt(false)
+    {}
 
     void DispatchScheduler::scheduleStart() {
-        std::cout << "DispatchScheduler::scheduleStart()\n";
+        log.info("Scheduled start.");
     }
 
     void DispatchScheduler::scheduleRestart() {
-        std::cout << "DispatchScheduler::scheduleRestart()\n";
+        log.info("Scheduled restart.");
     }
 
     void DispatchScheduler::scheduleShutdown() {
-        std::cout << "DispatchScheduler::scheduleShutdown()\n";
+        log.info("Scheduled shutdown.");
     }
 
     void DispatchScheduler::scheduleRefresh() {
-        std::cout << "DispatchScheduler::scheduleRefresh()\n";
+        log.info("Scheduled refresh.");
     }
 
-    void DispatchScheduler::printModules() {
-        std::cout << "DispatchScheduler::printModules()\n";
-    }
-
-    void DispatchScheduler::printJobs() {
-        std::cout << "DispatchScheduler::printJobs()\n";
+    void DispatchScheduler::print(unsigned int indent) {
+        std::vector<DispatchModule*> modules = config->getModules();
+        std::string sp(' ', indent);
+        std::cout << sp << "DispatchScheduler:\n";
+        std::cout << sp << "  Modules:\n";
+        for(int i = 0; i < modules.size(); i++) {
+            modules.at(i)->print(indent + 4);
+        }
     }
 
     void DispatchScheduler::pushJob(DispatchJob& job) {

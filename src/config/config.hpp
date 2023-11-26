@@ -39,6 +39,8 @@ namespace mirror {
          */
         uint16_t getLoggerPort() { return logger_port; }
 
+        std::vector<DispatchModule*>& getModules() { return modules; }
+
         /**
          * Prints this DispatchConfig to stdout with the specified indent.
          * @param indent The indent to print with 
